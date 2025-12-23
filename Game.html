@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="logocoderxhunter.png">
     <style>
-        /* ================= RESET & BASE (Đồng bộ) ================= */
+        /* ================= RESET & BASE ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
@@ -28,7 +28,7 @@
             letter-spacing: 1px;
         }
 
-        /* ================= HEADER (Đồng bộ) ================= */
+        /* ================= HEADER ================= */
         header {
             position: fixed; top: 0; width: 100%; height: 80px;
             background: rgba(0, 0, 0, 0.9);
@@ -38,7 +38,7 @@
             backdrop-filter: blur(10px);
         }
 
-        .logo-img { height: 200px; cursor: pointer; transition: 0.3s; }
+        .logo-img { height: 60px; cursor: pointer; transition: 0.3s; }
         .header-title { font-size: 1.5rem; color: #00F2FF; text-shadow: 2px 2px #000; }
 
         .menu-btn {
@@ -47,7 +47,7 @@
             font-family: 'VT323', monospace; font-weight: bold;
         }
 
-        /* NAVIGATION OVERLAY (Đồng bộ) */
+        /* NAVIGATION OVERLAY */
         .nav-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: none; flex-direction: column; justify-content: center;
@@ -111,17 +111,18 @@
         .genre { color: #aaa; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: block; }
         .story { line-height: 1.8; color: #eee; font-size: 1rem; margin-bottom: 30px; text-align: justify; }
         
+        /* Chỉnh sửa nút Download */
         .download {
             display: inline-block; padding: 12px 35px; background: #00f2ff;
             color: black; border-radius: 4px; text-decoration: none;
             font-family: 'VT323', monospace; font-weight: bold; font-size: 1.2rem;
-            transition: 0.3s;
+            transition: 0.3s; cursor: pointer; position: relative; z-index: 5001;
         }
         .download:hover { background: white; transform: translateY(-3px); }
-        .close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: white; opacity: 0.5; z-index: 100; }
+        .close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: white; opacity: 0.5; z-index: 5100; }
         .close:hover { opacity: 1; }
 
-        /* ================= FOOTER (Đồng bộ) ================= */
+        /* ================= FOOTER ================= */
         footer {
             background: rgba(0, 0, 0, 0.9);
             padding: 60px 10% 30px;
@@ -129,36 +130,21 @@
             color: white;
             position: relative;
         }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
         .footer-box h4 { color: #00f2ff; margin-bottom: 20px; font-size: 1.2rem; }
         .footer-box p, .footer-box a { color: #ccc; text-decoration: none; display: block; margin-bottom: 12px; font-size: 0.95rem; transition: 0.3s; }
         .footer-box a:hover { color: #00f6ff; }
-
         .social-gallery { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
-        .social-item {
-            width: 40px; height: 40px; border: 1px solid #00f2ff44;
-            border-radius: 6px; overflow: hidden; transition: 0.3s; background: #111;
-        }
+        .social-item { width: 40px; height: 40px; border: 1px solid #00f2ff44; border-radius: 6px; overflow: hidden; transition: 0.3s; background: #111; }
         .social-item:hover { transform: translateY(-5px); border-color: #00f2ff; box-shadow: 0 0 10px #00f2ff66; }
         .social-item img { width: 100%; height: 100%; object-fit: cover; }
-
         .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
 
         @media (max-width: 768px) {
             .title { font-size: 2rem; }
             .game-container { animation: none; flex-direction: column; width: 100%; padding: 20px; }
             .game-card { width: 100%; height: 250px; }
-            .footer-grid { text-align: center; }
-            .social-gallery { justify-content: center; }
         }
-
     </style>
 </head>
 
@@ -188,13 +174,13 @@
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeModalBtn">&times;</span>
         <div class="modal-body">
             <video id="modalVideo" muted autoplay playsinline loop controls></video>
             <h2 id="modalTitle" class="pixel-font"></h2>
             <div class="genre" id="modalGenre"></div>
             <div class="story" id="modalStory"></div>
-            <a id="modalLink" class="download" target="_blank">TẢI GAME NGAY</a>
+            <a id="modalLink" class="download" target="_blank" rel="noopener noreferrer">TẢI GAME NGAY</a>
         </div>
     </div>
 </div>
@@ -211,7 +197,6 @@
                 <a href="#" class="social-item"><img src="youtube.png" alt="Youtube"></a>
             </div>
         </div>
-
         <div class="footer-box">
             <h4 class="pixel-font">KHÁM PHÁ</h4>
             <a href="index.html">Trang chủ</a>
@@ -219,7 +204,6 @@
             <a href="index.html#members">Đội ngũ</a>
             <a href="#">Các dự án</a>
         </div>
-
         <div class="footer-box">
             <h4 class="pixel-font">THÔNG TIN</h4>
             <p>📍 TP. Hồ Chí Minh, Việt Nam</p>
@@ -227,7 +211,6 @@
             <p>📞 (+84) 123 456 789</p>
         </div>
     </div>
-
     <div class="footer-bottom">
         <p class="pixel-font" style="font-size: 14px; color:#00f2ff">CODER X HUNTER © 2025</p>
         <p style="font-size: 11px; color:#444; margin-top:5px">POWERED BY PIXEL PASSION</p>
@@ -246,7 +229,7 @@
             img: "TQWar2.0.png",
             preview: "TQWar2.0.mp4",
             trailer: "TQWar2.0.mp4",
-            story: "Nội chiến diễn ra kịch liệt giữa các vùng lãnh thổ. Các phe phái chiến đấu không ngừng nghỉ để giành quyền kiểm soát trung tâm quyền lực cổ đại. Bạn sẽ vào vai một chiến binh huyền thoại mang trên mình sứ mệnh thống nhất giang sơn.",
+            story: "Nội chiến diễn ra kịch liệt giữa các vùng lãnh thổ. Các phe phái chiến đấu không ngừng nghỉ để giành quyền kiểm soát trung tâm quyền lực cổ đại.",
             link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
         },
         {
@@ -255,7 +238,7 @@
             img: "ProtectNeilAmstrong.png",
             preview: "ProtectNeilAmstrong.mp4",
             trailer: "ProtectNeilAmstrong.mp4",
-            story: "Bảo vệ Neil Amstrong khỏi những cơn mưa thiên thạch bí ẩn từ vùng tối của mặt trăng. Đây không chỉ là cuộc chiến sinh tồn mà còn là nhiệm vụ khẳng định bước tiến vĩ đại nhất của nhân loại trong lịch sử chinh phục không gian.",
+            story: "Bảo vệ Neil Amstrong khỏi những cơn mưa thiên thạch bí ẩn từ vùng tối của mặt trăng.",
             link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
         },
         {
@@ -264,7 +247,7 @@
             img: "flappy.png",
             preview: "flappy.mp4",
             trailer: "flappy.mp4",
-            story: "Cuộc đua nghẹt thở vượt qua những chướng ngại vật pixel đầy thách thức. Mục tiêu duy nhất của bạn là về đích để kiếm đủ tiền trả nợ quán cà phê sau những đêm thức trắng code game.",
+            story: "Cuộc đua nghẹt thở vượt qua những chướng ngại vật pixel đầy thách thức.",
             link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
         },
         {
@@ -273,7 +256,7 @@
             img: "kungfu.jpg",
             preview: "kungfu.mp4",
             trailer: "kungfu.mp4",
-            story: "Một cơn ác mộng kinh hoàng diễn ra trong bếp. Tiêu diệt quái vật Ramen khổng lồ được sinh ra từ lòng oán hận của những bát đồ ăn thừa bị bỏ phí. Hãy sử dụng kỹ năng Kung Fu để sinh tồn!",
+            story: "Tiêu diệt quái vật Ramen khổng lồ được sinh ra từ lòng oán hận của đồ ăn thừa.",
             link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
         },
         {
@@ -282,7 +265,7 @@
             img: "ran.jpg",
             preview: "https://media.w3.org/2010/05/bunny/trailer.mp4",
             trailer: "https://media.w3.org/2010/05/bunny/trailer.mp4",
-            story:"Trong một tương lai kỹ thuật số bị virus xâm chiếm, bạn vào vai thực thể phòng thủ mã nguồn mang tên S.N.A.K.E. Để cứu lấy nhân loại, bạn phải không ngừng nuốt chửng dữ liệu để lớn mạnh, đồng thời đối mặt với nghịch lý: cơ thể càng dài, cái chết càng gần khi bạn dần trở thành vật cản duy nhất của chính mình.",
+            story: "Vào vai thực thể phòng thủ mã nguồn mang tên S.N.A.K.E trong tương lai kỹ thuật số.",
             link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
         }
     ];
@@ -295,6 +278,7 @@
     const modalGenre = document.getElementById("modalGenre");
     const modalStory = document.getElementById("modalStory");
     const modalLink = document.getElementById("modalLink");
+    const closeBtn = document.getElementById("closeModalBtn");
 
     const isMobile = window.innerWidth <= 768;
     const renderGames = isMobile ? games : [...games, ...games];
@@ -312,7 +296,7 @@
         card.onmouseenter = () => {
             if (!isMobile) {
                 bg.style.backgroundImage = `url(${g.img})`;
-                video.play().catch(e => {});
+                video.play().catch(() => {});
             }
         };
         card.onmouseleave = () => { if (!isMobile) video.pause(); };
@@ -320,28 +304,39 @@
         card.onclick = () => {
             modal.style.display = "flex";
             modalVideo.src = g.trailer;
-            modalVideo.muted = false;
-            modalVideo.play().catch(e => {
-                modalVideo.muted = true;
-                modalVideo.play();
-            });
             modalTitle.innerText = g.title;
             modalGenre.innerText = g.genre;
             modalStory.innerText = g.story;
-            modalLink.href = g.link;
+            modalLink.href = g.link; // Gán link trực tiếp ở đây
+            
+            modalVideo.muted = false;
+            modalVideo.play().catch(() => {
+                modalVideo.muted = true;
+                modalVideo.play();
+            });
         };
         list.appendChild(card);
     });
 
-    bg.style.backgroundImage = `url(${games[0].img})`;
-    document.querySelector(".close").onclick = closeModal;
-    modal.onclick = e => e.target === modal && closeModal();
-
+    // Hàm đóng Modal chuẩn
     function closeModal() {
         modalVideo.pause();
         modalVideo.src = "";
         modal.style.display = "none";
     }
+
+    closeBtn.onclick = closeModal;
+
+    // SỬA LỖI TẠI ĐÂY: Chỉ đóng modal khi click trúng vùng nền (modal), 
+    // không đóng khi click vào các nội dung bên trong (modal-content/download button)
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    };
+
+    // Khởi tạo hình nền đầu tiên
+    if(games.length > 0) bg.style.backgroundImage = `url(${games[0].img})`;
 </script>
 
 </body>
