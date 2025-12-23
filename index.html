@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODER X HUNTER - Game Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logocoderxhunter.png">
+    <style>
+        /* ================= RESET & BASE ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            line-height: 1.6;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1920') center/cover;
+            background-attachment: fixed;
+        }
+
+        .pixel-font { 
+            font-family: 'VT323', monospace; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ================= HEADER ================= */
+        header {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; z-index: 1000;
+            border-bottom: 2px solid #00f2ff33;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img { height: 200px; cursor: pointer; transition: 0.3s; }
+        .header-title { font-size: 1.5rem; color: #00F2FF; text-shadow: 2px 2px #000; }
+
+        .menu-btn {
+            background: #00f6ff; border: none; padding: 8px 15px;
+            cursor: pointer; font-size: 16px; color: black;
+            font-family: 'VT323', monospace; font-weight: bold;
+        }
+
+        /* NAVIGATION OVERLAY */
+        .nav-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 4000;
+        }
+        .nav-overlay a {
+            color: white; text-decoration: none; font-size: 2.5rem;
+            margin: 15px 0; transition: color 0.3s; font-family: 'VT323', monospace;
+        }
+        .nav-overlay a:hover { color: #00f6ff; }
+        .close-menu { position: absolute; top: 30px; right: 40px; font-size: 3rem; cursor: pointer; color: #00f6ff; }
+
+        /* ================= SECTION: ABOUT US ================= */
+        .about-section {
+            padding: 150px 10% 80px;
+            min-height: 100vh;
+            display: flex; align-items: center;
+        }
+
+        .about-container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px; align-items: center; }
+        .about-logo-large { width: 100%; max-width: 350px; filter: drop-shadow(0 0 15px #00f2ff); animation: float 4s ease-in-out infinite; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .about-text h2 { color: #00f2ff; margin-bottom: 20px; font-size: 3.5rem; line-height: 1; }
+        .about-text p { font-size: 1.1rem; color: #eee; margin-bottom: 30px; text-align: justify; }
+
+        .stats { display: flex; gap: 20px; flex-wrap: wrap; }
+        .stat-item {
+            background: rgba(0, 242, 255, 0.15); padding: 15px 25px;
+            border-radius: 4px; border: 1px solid #00f2ff44; min-width: 140px;
+            backdrop-filter: blur(10px);
+        }
+        .stat-item h3 { color: #00f2ff; font-size: 2.5rem; margin-bottom: 0; }
+        .stat-item span { font-size: 0.8rem; text-transform: uppercase; color: #ccc; font-weight: bold; }
+
+        /* ================= SECTION: MEMBERS ================= */
+        .member-section {
+            padding: 100px 5%; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .member-blur-container {
+            width: 100%; max-width: 1100px; padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .section-title h2 { font-size: 3rem; color: #00f2ff; text-align: center; margin-bottom: 40px;}
+
+        .scene { position: relative; width: 100%; height: 500px; display: flex; justify-content: center; align-items: center; }
+
+        .orbit { position: relative; width: 100%; height: 100%; transition: opacity 0.5s; }
+        .card {
+            position: absolute; left: 50%; top: 50%; width: 140px; height: 190px;
+            border-radius: 12px; background-size: cover; background-position: center;
+            cursor: pointer; border: 1px solid rgba(255,255,255,.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); transform-origin: center;
+            transition: transform .35s cubic-bezier(.16,1,.3,1), filter .35s ease, opacity .35s ease;
+        }
+        .card:hover { transform: scale(1.25) translate(-50%, -50%); z-index: 1000 !important; opacity: 1 !important; filter: none !important; border-color: #00f2ff; }
+        .orbit:hover .card { filter: blur(2px); opacity: .4; }
+        .orbit.hidden { opacity: 0; pointer-events: none; }
+
+        /* ================= OVERLAY ================= */
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0, 0.6); 
+            backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: .4s; z-index: 3000;
+        }
+        .overlay.show { opacity: 1; pointer-events: auto; }
+
+        .popup {
+            width: 75vw; height: 70vh;
+            border-radius: 20px; background: #111;
+            position: relative; overflow: hidden;
+            transform: scale(.6); filter: blur(20px);
+            transition: .6s cubic-bezier(.16,1,.3,1);
+            border: 2px solid #444;
+        }
+        .overlay.show .popup { transform: scale(1); filter: blur(0); }
+
+        .popup::before {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.2), transparent);
+            z-index: 1;
+        }
+
+        .popup-content {
+            position: relative; z-index: 2;
+            padding: 50px; max-width: 550px; color: white;
+        }
+
+        .popup h1 { font-size: 36px; margin-bottom: 15px; color: #00f6ff; font-weight: bold; }
+        .meta { display: flex; gap: 10px; font-size: 13px; margin-bottom: 20px; flex-wrap: wrap; }
+        .meta span { background: #00f2ff; color: #000; padding: 6px 14px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+        .popup p { color: #eee; line-height: 1.7; font-size: 17px; margin-bottom: 30px; }
+
+        .play {
+            padding: 14px 35px; background: #00f2ff; border: none; border-radius: 30px;
+            cursor: pointer; color: #000; font-weight: bold; font-size: 15px;
+            transition: all 0.2s;
+        }
+        .play:hover { transform: scale(1.05); background: white; }
+
+        .close-popup {
+            position: absolute; top: 20px; right: 25px; background: none; border: none;
+            color: white; font-size: 35px; cursor: pointer; z-index: 10; opacity: 0.7;
+        }
+
+        /* ================= FOOTER MỚI ================= */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 60px 10% 30px;
+            border-top: 2px solid #00f2ff33;
+            color: white;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-box h4 {
+            color: #00f2ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-box p, .footer-box a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .footer-box a:hover { color: #00f2ff; }
+
+        .social-gallery {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .social-item {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #00f2ff44;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: 0.3s;
+            background: #111;
+        }
+
+        .social-item:hover {
+            transform: translateY(-5px);
+            border-color: #00f2ff;
+            box-shadow: 0 0 10px #00f2ff66;
+        }
+
+        .social-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .about-container { grid-template-columns: 1fr; text-align: center; }
+            .scene { height: 400px; }
+            .popup { width: 95vw; height: 85vh; }
+            .member-blur-container { padding: 20px; }
+            .footer-grid { text-align: center; }
+            .social-gallery { justify-content: center; }
+        }
+
+        /* Điều chỉnh Section About */
+.about-section {
+    padding: 100px 5% 50px; /* Giảm padding trên mobile */
+    min-height: auto;
+}
+
+.about-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Tự nhảy dòng khi thiếu chỗ */
+    gap: 30px;
+    text-align: center;
+}
+
+.about-logo-large {
+    max-width: 250px; /* Thu nhỏ logo trên màn hình nhỏ */
+    margin: 0 auto;
+}
+
+/* Điều chỉnh Hệ thống Thống kê (Stats) */
+.stats {
+    justify-content: center;
+}
+
+.stat-item {
+    flex: 1 1 120px; /* Cho phép các ô thống kê co giãn */
+    padding: 10px;
+}
+
+/* Điều chỉnh Popup Thành viên cho Mobile */
+.popup {
+    width: 90vw;
+    height: auto;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-content {
+    padding: 30px 20px;
+}
+
+.popup h1 { font-size: 24px; }
+.popup p { font-size: 15px; }
+
+/* Media Query tổng quát */
+@media (max-width: 768px) {
+    header { padding: 0 20px; }
+    .logo-img { height: 120px; } /* Thu nhỏ logo header */
+    .header-title { font-size: 1.1rem; }
+    
+    .scene { height: 350px; } /* Thu hẹp vòng xoay nhân sự */
+    .card { width: 100px; height: 140px; } /* Thu nhỏ thẻ nhân sự */
+}
+    </style>
+    
+</head>
+
+<body>
+
+<header>
+    <img src="logocoderxhunter.png" alt="Logo" class="logo-img" onclick="window.scrollTo(0,0)">
+    <div class="header-title pixel-font">CODER X HUNTER</div>
+    <button class="menu-btn" onclick="toggleMenu(true)">☰</button>
+</header>
+
+<div class="nav-overlay" id="navMenu">
+    <span class="close-menu" onclick="toggleMenu(false)">×</span>
+    <a href="#" onclick="toggleMenu(false)">TRANG CHỦ</a>
+    <a href="#about" onclick="toggleMenu(false)">GIỚI THIỆU</a>
+    <a href="#members" onclick="toggleMenu(false)">THÀNH VIÊN</a>
+    <a href="Game.html" onclick="toggleMenu(false)">DỰ ÁN</a>
+</div>
+
+<section class="about-section" id="about">
+    <div class="about-container">
+        <div class="about-image">
+            <img src="logocoderxhunter.png" alt="Logo" class="about-logo-large">
+        </div>
+        <div class="about-text">
+            <h2 class="pixel-font">GIỚI THIỆU<br>STUDIO</h2>
+            <p>
+                Chào mừng bạn đến với <strong>CODER X HUNTER</strong>. Chúng tôi là một đội ngũ phát triển game độc lập (Indie Game) được thành lập vào năm 2025. <br><br>
+                Với niềm đam mê mãnh liệt dành cho đồ họa Pixel Art và lối chơi cổ điển, chúng tôi không ngừng sáng tạo để mang đến những trải nghiệm giải trí độc đáo, đậm chất nghệ thuật cho cộng đồng game thủ Việt.
+            </p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <h3 class="pixel-font">08</h3>
+                    <span>THÀNH VIÊN</span>
+                </div>
+                <div class="stat-item">
+                    <h3 class="pixel-font">2025</h3>
+                    <span>NĂM LẬP</span>
+                </div>
+                <div class="stat-item">
+                    <h3 class="pixel-font">05+</h3>
+                    <span>DỰ ÁN</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="member-section" id="members">
+    <div class="member-blur-container">
+        <div class="section-title">
+            <h2 class="pixel-font">ĐỘI NGŨ CỦA CHÚNG TÔI</h2>
+        </div>
+        
+        <div class="scene">
+            <div class="orbit">
+                <div class="card" style="background-image:url('avatarkiet.jpg')"></div>
+                <div class="card" style="background-image:url('avatarkhang.jpg')"></div>
+                <div class="card" style="background-image:url('avatarlong.jpg')"></div>
+                <div class="card" style="background-image:url('avatarngan.jpg')"></div>
+                <div class="card" style="background-image:url('avatarhoang.jpg')"></div>
+                <div class="card" style="background-image:url('avatarkhoa.jpg')"></div>
+                <div class="card" style="background-image:url('avatarlinh.jpeg')"></div>
+                <div class="card" style="background-image:url('avatarnghia.jpg')"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="overlay" id="overlay">
+    <div class="popup">
+        <button class="close-popup" onclick="closePopup()">✕</button>
+        <div class="popup-content">
+            <h1>Tên Thành Viên</h1>
+            <div class="meta"></div>
+            <p></p>
+            <button class="play">Liên hệ ngay</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-box">
+            <h4 class="pixel-font">CODER X HUNTER</h4>
+            <p>Hành trình chinh phục những giới hạn của nghệ thuật Pixel và lập trình trò chơi.</p>
+            <div class="social-gallery">
+                <a href="#" class="social-item"><img src="facebook.png" alt="Facebook"></a>
+                <a href="#" class="social-item"><img src="instagram.png" alt="Instagram"></a>
+                <a href="#" class="social-item"><img src="x.png" alt="Twitter"></a>
+                <a href="#" class="social-item"><img src="youtube.png" alt="Youtube"></a>
+            </div>
+        </div>
+
+        <div class="footer-box">
+            <h4 class="pixel-font">KHÁM PHÁ</h4>
+            <a href="#">Trang chủ</a>
+            <a href="#about">Về chúng tôi</a>
+            <a href="#members">Đội ngũ</a>
+            <a href="Game.html">Các dự án</a>
+        </div>
+
+        <div class="footer-box">
+            <h4 class="pixel-font">THÔNG TIN</h4>
+            <p>📍 TP. Hồ Chí Minh, Việt Nam</p>
+            <p>📧 contact@coderxhunter.vn</p>
+            <p>📞 (+84) 123 456 789</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="pixel-font" style="font-size: 14px; color:#00f2ff">CODER X HUNTER © 2025</p>
+        <p style="font-size: 11px; color:#444; margin-top:5px">POWERED BY PIXEL PASSION</p>
+    </div>
+</footer>
+
+<script>
+    function toggleMenu(show) {
+        document.getElementById('navMenu').style.display = show ? 'flex' : 'none';
+    }
+
+    const memberData = [
+        { name:"Huỳnh Tuấn Kiệt", role:"Mobile Dev", skills:["Flutter","Swift"], desc:"Chuyên gia phát triển ứng dụng di động đa nền tảng với hiệu năng cao.", bg:"avatarkiet.jpg" },
+        { name:"Phạm Thái Khang", role:"UI/UX", skills:["Figma"], desc:"Kiến tạo trải nghiệm người dùng hiện đại và giao diện pixel hoàn hảo.", bg:"avatarkhang.jpg" },
+        { name:"Võ Hoàng Long", role:"Frontend", skills:["React"], desc:"Biến các bản thiết kế thành những trang web mượt mà và sống động.", bg:"avatarlong.jpg" },
+        { name:"Nguyễn Kim Ngân", role:"Backend", skills:["Node","SQL"], desc:"Xử lý logic hệ thống và quản trị dữ liệu an toàn, hiệu quả.", bg:"avatarngan.jpg" },
+        { name:"Nguyễn Minh Hoàng", role:"Content", skills:["Video"], desc:"Nhà sáng tạo nội dung, truyền tải câu chuyện qua những khung hình.", bg:"avatarhoang.jpg" },
+        { name:"Nguyễn Trần Anh Khoa", role:"Marketing", skills:["SEO"], desc:"Đưa sản phẩm đến gần hơn với cộng đồng thông qua chiến lược thông minh.", bg:"avatarkhoa.jpg" },
+        { name:"Đoàn Khánh Linh", role:"QA", skills:["Test"], desc:"Đảm bảo mọi sản phẩm đều đạt tiêu chuẩn chất lượng cao nhất.", bg:"avatarlinh.jpeg" },
+        { name:"Lâm Trung Nghĩa", role:"Leader", skills:["Management"], desc:"Người dẫn dắt và kết nối các thành viên để tạo nên những kỳ tích.", bg:"avatarnghia.jpg" }
+    ];
+
+    const cards = document.querySelectorAll(".card");
+    const orbit = document.querySelector(".orbit");
+    const overlay = document.getElementById("overlay");
+    const popup = document.querySelector(".popup");
+    const radius = 280; 
+    const ellipseY = 0.4;
+    const speed = 0.0006;
+    let start = performance.now();
+    let active = false;
+
+    function animate(time) {
+        if (active) return;
+        const t = time - start;
+        cards.forEach((c, i) => {
+            const a = t * speed + i * 2 * Math.PI / cards.length;
+            const x = Math.cos(a) * radius;
+            const y = Math.sin(a) * radius * ellipseY;
+            const d = Math.sin(a);
+            c.style.transform = `translate(-50%,-50%) translate(${x}px,${y}px) scale(${0.9 + (d + 1) * 0.15})`;
+            c.style.zIndex = Math.round((d + 1) * 100);
+            c.style.opacity = .7 + (d + 1) * .15;
+            c.style.filter = `blur(${(1 - d) * 1.5}px)`;
+        });
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    cards.forEach((card, i) => {
+        card.onclick = () => {
+            const m = memberData[i];
+            popup.style.background = `linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.2)), url('${m.bg}') center / cover`;
+            popup.querySelector("h1").innerText = m.name;
+            popup.querySelector(".meta").innerHTML =
+                `<span style="background:#00ffff;color:#000">${m.role}</span>` +
+                m.skills.map(s => `<span>${s}</span>`).join("");
+            popup.querySelector("p").innerText = m.desc;
+
+            active = true;
+            orbit.classList.add("hidden");
+            overlay.classList.add("show");
+        };
+    });
+
+    function closePopup() {
+        overlay.classList.remove("show");
+        orbit.classList.remove("hidden");
+        active = false;
+        start = performance.now();
+        requestAnimationFrame(animate);
+    }
+
+    overlay.onclick = e => { if (e.target === overlay) closePopup(); };
+</script>
+
+</body>
+</html>

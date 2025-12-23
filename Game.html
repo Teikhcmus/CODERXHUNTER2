@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODER X HUNTER - Dự án Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logocoderxhunter.png">
+    <style>
+        /* ================= RESET & BASE (Đồng bộ) ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            line-height: 1.6;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1920') center/cover;
+            background-attachment: fixed;
+            padding-top: 80px;
+        }
+
+        .pixel-font { 
+            font-family: 'VT323', monospace; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ================= HEADER (Đồng bộ) ================= */
+        header {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; z-index: 1000;
+            border-bottom: 2px solid #00f2ff33;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img { height: 200px; cursor: pointer; transition: 0.3s; }
+        .header-title { font-size: 1.5rem; color: #00F2FF; text-shadow: 2px 2px #000; }
+
+        .menu-btn {
+            background: #00f6ff; border: none; padding: 8px 15px;
+            cursor: pointer; font-size: 16px; color: black;
+            font-family: 'VT323', monospace; font-weight: bold;
+        }
+
+        /* NAVIGATION OVERLAY (Đồng bộ) */
+        .nav-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 4000;
+        }
+        .nav-overlay a {
+            color: white; text-decoration: none; font-size: 2.5rem;
+            margin: 15px 0; transition: color 0.3s; font-family: 'VT323', monospace;
+        }
+        .nav-overlay a:hover { color: #00f6ff; }
+        .close-menu { position: absolute; top: 30px; right: 40px; font-size: 3rem; cursor: pointer; color: #00f6ff; }
+
+        /* ================= GAME CONTENT ================= */
+        #background {
+            position: fixed; inset: 0; background-size: cover; background-position: center;
+            filter: blur(16px) brightness(.3); transform: scale(1.1);
+            transition: background-image 1s ease; z-index: -1;
+        }
+
+        .title {
+            text-align: center; margin: 50px 0 20px; font-size: 3.5rem;
+            color: #00F2FF; text-shadow: 3px 3px #000;
+        }
+
+        .game-wrapper { overflow: hidden; padding-bottom: 100px; }
+        .game-container {
+            display: flex; gap: 30px; padding: 40px; width: max-content;
+            animation: slide 28s linear infinite;
+        }
+
+        @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .game-container:hover { animation-play-state: paused; }
+
+        .game-card {
+            min-width: 280px; height: 380px; border-radius: 12px;
+            overflow: hidden; position: relative; background: #111;
+            cursor: pointer; border: 1px solid rgba(0, 242, 255, 0.2);
+            transition: 0.4s cubic-bezier(.16,1,.3,1);
+        }
+        .game-card:hover { transform: scale(1.1) translateY(-10px); border-color: #00f2ff; box-shadow: 0 0 30px rgba(0,242,255,0.3); }
+        .game-card img, .game-card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .game-card video { opacity: 0; }
+        .game-card:hover video { opacity: 1; }
+        .game-info { position: absolute; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+        .game-info h3 { font-family: 'VT323', monospace; font-size: 1.2rem; color: #00f2ff; }
+
+        /* ================= MODAL ================= */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,.9);
+            display: none; justify-content: center; align-items: center; z-index: 5000; padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            width: 100%; max-width: 900px; max-height: 90vh; background: #111;
+            border-radius: 20px; position: relative; border: 1px solid #00f2ff44;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .modal-body { padding: 40px; overflow-y: auto; }
+        .modal video { width: 100%; border-radius: 12px; margin-bottom: 25px; border: 1px solid #333; }
+        .modal h2 { font-family: 'VT323', monospace; font-size: 2.5rem; color: #00f2ff; margin-bottom: 10px; }
+        .genre { color: #aaa; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: block; }
+        .story { line-height: 1.8; color: #eee; font-size: 1rem; margin-bottom: 30px; text-align: justify; }
+        
+        .download {
+            display: inline-block; padding: 12px 35px; background: #00f2ff;
+            color: black; border-radius: 4px; text-decoration: none;
+            font-family: 'VT323', monospace; font-weight: bold; font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        .download:hover { background: white; transform: translateY(-3px); }
+        .close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: white; opacity: 0.5; z-index: 100; }
+        .close:hover { opacity: 1; }
+
+        /* ================= FOOTER (Đồng bộ) ================= */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 60px 10% 30px;
+            border-top: 2px solid #00f2ff33;
+            color: white;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-box h4 { color: #00f2ff; margin-bottom: 20px; font-size: 1.2rem; }
+        .footer-box p, .footer-box a { color: #ccc; text-decoration: none; display: block; margin-bottom: 12px; font-size: 0.95rem; transition: 0.3s; }
+        .footer-box a:hover { color: #00f6ff; }
+
+        .social-gallery { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+        .social-item {
+            width: 40px; height: 40px; border: 1px solid #00f2ff44;
+            border-radius: 6px; overflow: hidden; transition: 0.3s; background: #111;
+        }
+        .social-item:hover { transform: translateY(-5px); border-color: #00f2ff; box-shadow: 0 0 10px #00f2ff66; }
+        .social-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .game-container { animation: none; flex-direction: column; width: 100%; padding: 20px; }
+            .game-card { width: 100%; height: 250px; }
+            .footer-grid { text-align: center; }
+            .social-gallery { justify-content: center; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <img src="logocoderxhunter.png" alt="Logo" class="logo-img" onclick="window.location.href='index.html'">
+    <div class="header-title pixel-font">CODER X HUNTER</div>
+    <button class="menu-btn" onclick="toggleMenu(true)">☰</button>
+</header>
+
+<div class="nav-overlay" id="navMenu">
+    <span class="close-menu" onclick="toggleMenu(false)">×</span>
+    <a href="index.html" onclick="toggleMenu(false)">TRANG CHỦ</a>
+    <a href="index.html#about" onclick="toggleMenu(false)">GIỚI THIỆU</a>
+    <a href="index.html#members" onclick="toggleMenu(false)">THÀNH VIÊN</a>
+    <a href="#" onclick="toggleMenu(false)">DỰ ÁN</a>
+</div>
+
+<div id="background"></div>
+
+<h1 class="title pixel-font">GAME SHOWCASE</h1>
+
+<div class="game-wrapper">
+    <div class="game-container" id="list"></div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-body">
+            <video id="modalVideo" muted autoplay playsinline loop controls></video>
+            <h2 id="modalTitle" class="pixel-font"></h2>
+            <div class="genre" id="modalGenre"></div>
+            <div class="story" id="modalStory"></div>
+            <a id="modalLink" class="download" target="_blank">TẢI GAME NGAY</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-box">
+            <h4 class="pixel-font">CODER X HUNTER</h4>
+            <p>Hành trình chinh phục những giới hạn của nghệ thuật Pixel và lập trình trò chơi.</p>
+            <div class="social-gallery">
+                <a href="#" class="social-item"><img src="facebook.png" alt="Facebook"></a>
+                <a href="#" class="social-item"><img src="instagram.png" alt="Instagram"></a>
+                <a href="#" class="social-item"><img src="x.png" alt="Twitter"></a>
+                <a href="#" class="social-item"><img src="youtube.png" alt="Youtube"></a>
+            </div>
+        </div>
+
+        <div class="footer-box">
+            <h4 class="pixel-font">KHÁM PHÁ</h4>
+            <a href="index.html">Trang chủ</a>
+            <a href="index.html#about">Về chúng tôi</a>
+            <a href="index.html#members">Đội ngũ</a>
+            <a href="#">Các dự án</a>
+        </div>
+
+        <div class="footer-box">
+            <h4 class="pixel-font">THÔNG TIN</h4>
+            <p>📍 TP. Hồ Chí Minh, Việt Nam</p>
+            <p>📧 contact@coderxhunter.vn</p>
+            <p>📞 (+84) 123 456 789</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="pixel-font" style="font-size: 14px; color:#00f2ff">CODER X HUNTER © 2025</p>
+        <p style="font-size: 11px; color:#444; margin-top:5px">POWERED BY PIXEL PASSION</p>
+    </div>
+</footer>
+
+<script>
+    function toggleMenu(show) {
+        document.getElementById('navMenu').style.display = show ? 'flex' : 'none';
+    }
+
+    const games = [
+        {
+            title: "TQ War 2.0",
+            genre: "Action RPG",
+            img: "TQWar2.0.png",
+            preview: "TQWar2.0.mp4",
+            trailer: "TQWar2.0.mp4",
+            story: "Nội chiến diễn ra kịch liệt giữa các vùng lãnh thổ. Các phe phái chiến đấu không ngừng nghỉ để giành quyền kiểm soát trung tâm quyền lực cổ đại. Bạn sẽ vào vai một chiến binh huyền thoại mang trên mình sứ mệnh thống nhất giang sơn.",
+            link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
+        },
+        {
+            title: "ProtectNeilAmstrong",
+            genre: "Fantasy Adventure",
+            img: "ProtectNeilAmstrong.png",
+            preview: "ProtectNeilAmstrong.mp4",
+            trailer: "ProtectNeilAmstrong.mp4",
+            story: "Bảo vệ Neil Amstrong khỏi những cơn mưa thiên thạch bí ẩn từ vùng tối của mặt trăng. Đây không chỉ là cuộc chiến sinh tồn mà còn là nhiệm vụ khẳng định bước tiến vĩ đại nhất của nhân loại trong lịch sử chinh phục không gian.",
+            link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
+        },
+        {
+            title: "FlappyxHunter",
+            genre: "Racing",
+            img: "flappy.png",
+            preview: "flappy.mp4",
+            trailer: "flappy.mp4",
+            story: "Cuộc đua nghẹt thở vượt qua những chướng ngại vật pixel đầy thách thức. Mục tiêu duy nhất của bạn là về đích để kiếm đủ tiền trả nợ quán cà phê sau những đêm thức trắng code game.",
+            link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
+        },
+        {
+            title: "KungFu",
+            genre: "Survival Horror",
+            img: "kungfu.jpg",
+            preview: "kungfu.mp4",
+            trailer: "kungfu.mp4",
+            story: "Một cơn ác mộng kinh hoàng diễn ra trong bếp. Tiêu diệt quái vật Ramen khổng lồ được sinh ra từ lòng oán hận của những bát đồ ăn thừa bị bỏ phí. Hãy sử dụng kỹ năng Kung Fu để sinh tồn!",
+            link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
+        },
+        {
+            title: "SNAKE",
+            genre: "Mobile game",
+            img: "ran.jpg",
+            preview: "https://media.w3.org/2010/05/bunny/trailer.mp4",
+            trailer: "https://media.w3.org/2010/05/bunny/trailer.mp4",
+            story:"Trong một tương lai kỹ thuật số bị virus xâm chiếm, bạn vào vai thực thể phòng thủ mã nguồn mang tên S.N.A.K.E. Để cứu lấy nhân loại, bạn phải không ngừng nuốt chửng dữ liệu để lớn mạnh, đồng thời đối mặt với nghịch lý: cơ thể càng dài, cái chết càng gần khi bạn dần trở thành vật cản duy nhất của chính mình.",
+            link: "https://dark-fantasy-pixel-g-toea.bolt.host/"
+        }
+    ];
+
+    const list = document.getElementById("list");
+    const bg = document.getElementById("background");
+    const modal = document.getElementById("modal");
+    const modalVideo = document.getElementById("modalVideo");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalGenre = document.getElementById("modalGenre");
+    const modalStory = document.getElementById("modalStory");
+    const modalLink = document.getElementById("modalLink");
+
+    const isMobile = window.innerWidth <= 768;
+    const renderGames = isMobile ? games : [...games, ...games];
+
+    renderGames.forEach(g => {
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.innerHTML = `
+            <img src="${g.img}">
+            <video src="${g.preview}" muted loop playsinline preload="auto"></video>
+            <div class="game-info"><h3 class="pixel-font">${g.title}</h3></div>
+        `;
+
+        const video = card.querySelector("video");
+        card.onmouseenter = () => {
+            if (!isMobile) {
+                bg.style.backgroundImage = `url(${g.img})`;
+                video.play().catch(e => {});
+            }
+        };
+        card.onmouseleave = () => { if (!isMobile) video.pause(); };
+
+        card.onclick = () => {
+            modal.style.display = "flex";
+            modalVideo.src = g.trailer;
+            modalVideo.muted = false;
+            modalVideo.play().catch(e => {
+                modalVideo.muted = true;
+                modalVideo.play();
+            });
+            modalTitle.innerText = g.title;
+            modalGenre.innerText = g.genre;
+            modalStory.innerText = g.story;
+            modalLink.href = g.link;
+        };
+        list.appendChild(card);
+    });
+
+    bg.style.backgroundImage = `url(${games[0].img})`;
+    document.querySelector(".close").onclick = closeModal;
+    modal.onclick = e => e.target === modal && closeModal();
+
+    function closeModal() {
+        modalVideo.pause();
+        modalVideo.src = "";
+        modal.style.display = "none";
+    }
+</script>
+
+</body>
+</html>
